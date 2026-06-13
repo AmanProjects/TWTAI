@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 0 Slides: Introduction to AI — The Landscape | Tech Writer's Tribe</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --ink: #1a2332;
+      --muted: #5a6a7e;
+      --accent: #1a56db;
+      --accent-light: #ebf5ff;
+      --accent-2: #0e9f6e;
+      --line: #e2e8f0;
+      --shadow: 0 4px 24px rgba(26, 35, 50, 0.10);
+      --shadow-lg: 0 8px 40px rgba(26, 35, 50, 0.16);
+      --level-bg: #f3e5f5;
+      --level-text: #6a1b9a;
+      --level-border: #ce93d8;
+      --code-bg: #1e293b;
+      --code-text: #e2e8f0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #f0f4ff 0%, #f5f7fa 50%, #eef7f4 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header bar ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+
+    .header-title {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--level-bg);
+      color: var(--level-text);
+      border: 1px solid var(--level-border);
+    }
+
+    /* ── Slide stage ── */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.5rem;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: min(1100px, 96vw);
+      height: min(660px, calc(100vh - 130px));
+      background: var(--panel);
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      padding: 2rem 2.5rem 1.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide.active { display: flex; }
+
+    /* Decorative accent circle */
+    .slide::before {
+      content: "";
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      right: -180px;
+      top: -180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26,86,219,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ── Slide body typography ── */
+    .slide-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .slide-body::-webkit-scrollbar { width: 4px; }
+    .slide-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+    .slide-body h1 {
+      font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 0.1rem;
+    }
+
+    .slide-body h2 {
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.5rem;
+    }
+
+    .slide-body h3 {
+      font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .slide-body h4 {
+      font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+      font-weight: 600;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.5rem;
+    }
+
+    .slide-body p {
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .slide-body strong { color: var(--ink); }
+
+    .slide-body blockquote {
+      border-left: 4px solid var(--accent);
+      padding: 0.7rem 1rem;
+      background: var(--accent-light);
+      border-radius: 0 10px 10px 0;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      font-style: italic;
+      color: var(--ink);
+      margin: 0.3rem 0;
+    }
+
+    .slide-body ul,
+    .slide-body ol {
+      padding-left: 1.4rem;
+      font-size: clamp(0.92rem, 1.35vw, 1.08rem);
+      line-height: 1.5;
+    }
+
+    .slide-body li { margin: 0.3rem 0; }
+
+    .slide-body ul.checklist { list-style: none; padding-left: 0.2rem; }
+    .slide-body ul.checklist li { display: flex; align-items: flex-start; gap: 0.5rem; }
+    .slide-body ul.checklist input { margin-top: 0.2rem; accent-color: var(--accent-2); }
+
+    .slide-body table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(0.8rem, 1.15vw, 0.96rem);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .slide-body th {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 700;
+      padding: 0.5rem 0.7rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .slide-body td {
+      padding: 0.45rem 0.7rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .slide-body tr:last-child td { border-bottom: none; }
+    .slide-body tr:nth-child(even) td { background: #f8fafc; }
+
+    .slide-body code {
+      background: #f1f5f9;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", "Fira Code", Menlo, monospace;
+      font-size: 0.9em;
+      color: #c7254e;
+      border: 1px solid #e2e8f0;
+    }
+
+    .slide-body pre.code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      font-family: "JetBrains Mono", "Fira Code", Menlo, monospace;
+      font-size: clamp(0.75rem, 1.05vw, 0.9rem);
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 0.3rem 0;
+      flex-shrink: 0;
+    }
+
+    .slide-body pre.code-block code {
+      background: none;
+      border: none;
+      color: inherit;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover { background: #1447b5; border-color: #1447b5; color: #fff; }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 400px;
+      background: var(--line);
+      border-radius: 999px;
+      height: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .slide-counter {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* ── Keyboard hint ── */
+    .kbd-hint {
+      font-size: 0.73rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 0.05em 0.35em;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85em;
+    }
+
+    /* ── Speaker notes overlay ── */
+    .notes-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 100;
+      align-items: flex-end;
+      padding: 2rem;
+    }
+
+    .notes-overlay.visible { display: flex; }
+
+    .notes-panel {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-height: 50vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .notes-panel h4 { color: var(--accent); margin-bottom: 0.5rem; }
+    .notes-panel p { font-size: 0.92rem; line-height: 1.55; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .slide { padding: 1.2rem 1.1rem; border-radius: 14px; }
+      .slide-body h1 { font-size: 1.4rem; }
+      .header-title { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <span class="brand">TWT</span>
+      <span class="header-title">Module 0 Slides: Introduction to AI — The Landscape</span>
+    </div>
+    <div class="level-badge">Introductory</div>
+  </header>
+
+  <main class="stage" id="stage">
+    <section class="slide" id="slide-1">
+      <div class="slide-number">1 / 17</div>
+      <div class="slide-body"><h1>Introduction to AI</h1>
+<h3>The Landscape Before the Workshop</h3>
+<h4>Module 0 of 8 | Introductory Level</h4>
+<p><strong>Tech Writer's Tribe</strong></p>
+<p>AI-Powered Documentation Mastery</p>
+</div>
+    </section>
+
+    <section class="slide" id="slide-2">
+      <div class="slide-number">2 / 17</div>
+      <div class="slide-body"><h1>What You'll Know By the End</h1>
+<ul>
+<li>What LLMs are and how they actually work</li>
+<li>The major AI models and what makes each unique</li>
+<li>The tools and IDEs you'll encounter in the wild</li>
+<li>What you can <strong>build</strong> on top of each platform</li>
+<li>Why this workshop uses <strong>Claude + MCP</strong> specifically</li>
+</ul>
+<blockquote>No coding required to understand any of this.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-3">
+      <div class="slide-number">3 / 17</div>
+      <div class="slide-body"><h1>What Is a Large Language Model?</h1>
+<p>An LLM is a neural network trained on massive amounts of text to <strong>predict the next token</strong> — a word piece, punctuation mark, or code character.</p>
+<p><strong>Three things to remember:</strong></p>
+<table>
+<thead><tr><th>Concept</th><th>What It Means</th></tr></thead>
+<tbody>
+<tr><td><strong>Training</strong></td><td>Happened once, on internet-scale text. The model's "knowledge" is frozen at a cutoff date.</td></tr>
+<tr><td><strong>Inference</strong></td><td>Happens every time you use it. The model generates tokens one by one, in real time.</td></tr>
+<tr><td><strong>Context window</strong></td><td>The working memory — everything the model can "see" in one conversation. Measured in tokens.</td></tr>
+</tbody></table>
+<p><strong>Hallucinations happen</strong> when the model generates plausible-sounding tokens that aren't grounded in fact. This is a core behavior, not a bug to be patched.</p>
+</div>
+    </section>
+
+    <section class="slide" id="slide-4">
+      <div class="slide-number">4 / 17</div>
+      <div class="slide-body"><h1>The AI Landscape: Four Categories</h1>
+<table>
+<thead><tr><th>Category</th><th>What It Is</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td><strong>Frontier models</strong></td><td>Best-in-class reasoning + capability</td><td>Claude, GPT-4o, Gemini 2.5 Pro</td></tr>
+<tr><td><strong>Coding assistants</strong></td><td>Optimized for software development tasks</td><td>GitHub Copilot, Cursor, Codex CLI</td></tr>
+<tr><td><strong>Enterprise platforms</strong></td><td>Integrated into productivity suites</td><td>Microsoft 365 Copilot, Google Workspace AI</td></tr>
+<tr><td><strong>Inference providers</strong></td><td>Run open-source models at high speed</td><td>Groq, Together AI, Fireworks AI</td></tr>
+</tbody></table>
+<p><strong>This workshop lives at the intersection of frontier models + coding assistants</strong> — building tools that technical writers can use and extend.</p>
+</div>
+    </section>
+
+    <section class="slide" id="slide-5">
+      <div class="slide-number">5 / 17</div>
+      <div class="slide-body"><h1>Claude — Anthropic</h1>
+<p><strong>Model family (2025):</strong> Claude Opus 4 · Claude Sonnet 4 · Claude Haiku 4</p>
+<p>Claude is Anthropic's frontier model, designed with a strong focus on safety, long-context reasoning, and agentic tool use.</p>
+<p><strong>Surfaces:</strong></p>
+<ul>
+<li><strong>Claude.ai</strong> — web chat, Projects (persistent file context), image/PDF understanding</li>
+<li><strong>Claude Code</strong> — terminal-based coding agent (like a junior developer in your shell)</li>
+<li><strong>Claude Desktop</strong> — desktop app with MCP server support</li>
+<li><strong>Anthropic API</strong> — integrate Claude into any application</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li>Skills / slash commands (<code>.claude/commands/*.md</code>) — reusable prompt templates</li>
+<li><code>CLAUDE.md</code> — project-level behavioral rules and context</li>
+<li><strong>MCP Servers</strong> — TypeScript or Python servers that give Claude new tools, data, and prompts</li>
+<li><strong>Claude Code SDK</strong> — script programmatic agents that read files, run commands, call APIs</li>
+<li><strong>Marketplace plugins</strong> — bundles of skills + MCP server + config for team distribution</li>
+<li>Prompt-cached pipelines for cost-efficient repeated workloads</li>
+</ul>
+<blockquote><strong>This workshop focuses here.</strong> Claude + MCP is the most extensible stack for technical writers.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-6">
+      <div class="slide-number">6 / 17</div>
+      <div class="slide-body"><h1>ChatGPT — OpenAI</h1>
+<p><strong>Model family (2025):</strong> GPT-4o · GPT-4o mini · o1 · o3 · o4-mini</p>
+<p>OpenAI pioneered the modern LLM era. GPT-4o is their flagship multimodal model; the <code>o</code>-series models (o1, o3, o4-mini) use extended chain-of-thought reasoning for harder problems.</p>
+<p><strong>Surfaces:</strong></p>
+<ul>
+<li><strong>ChatGPT.com</strong> — web and mobile chat interface</li>
+<li><strong>OpenAI API</strong> — programmatic access for developers</li>
+<li><strong>OpenAI Assistants API</strong> — stateful agents with threads</li>
+<li><strong>OpenAI Codex CLI</strong> — open-source terminal coding agent (like Claude Code)</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li><strong>Custom GPTs</strong> — no-code AI assistants with custom instructions, uploaded files, and Actions</li>
+<li><strong>GPT Actions</strong> — connect a Custom GPT to any REST API via an OpenAPI spec</li>
+<li><strong>Assistants</strong> — agents with persistent threads, file search, code interpreter, function calling</li>
+<li><strong>Fine-tuned models</strong> — train GPT-4o mini on your proprietary data and style</li>
+<li><strong>Structured outputs</strong> — guarantee JSON schema-compliant responses for automation</li>
+<li><strong>Batch API pipelines</strong> — cost-efficient bulk document processing</li>
+</ul>
+<blockquote>Best for: teams already in the OpenAI ecosystem, Custom GPT distribution on GPT Store.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-7">
+      <div class="slide-number">7 / 17</div>
+      <div class="slide-body"><h1>Google Gemini</h1>
+<p><strong>Model family (2025):</strong> Gemini 2.5 Pro · Gemini 2.0 Flash · Gemini 1.5 Pro (2M token context)</p>
+<p>Google's multimodal frontier model — understands text, images, video, audio, and code natively.</p>
+<p><strong>Surfaces:</strong></p>
+<ul>
+<li><strong>Gemini.google.com</strong> — web interface, Gems (custom AI assistants)</li>
+<li><strong>Google AI Studio</strong> — rapid prototyping and API exploration</li>
+<li><strong>Gemini in Google Workspace</strong> — AI inside Docs, Sheets, Slides, Gmail, Meet</li>
+<li><strong>Vertex AI</strong> — enterprise deployment with governance, grounding, and RAG</li>
+<li><strong>NotebookLM</strong> — AI research assistant grounded in your uploaded documents</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li><strong>Gems</strong> — custom-configured Gemini assistants for specific personas or tasks</li>
+<li><strong>Grounded apps</strong> — connect to Google Search or your own data sources for real-time accuracy</li>
+<li><strong>Vertex AI agents</strong> — production agents with memory, tools, and enterprise security</li>
+<li><strong>Workspace add-ons</strong> — extend Docs/Sheets/Slides with Gemini API calls</li>
+<li><strong>Multimodal pipelines</strong> — process PDFs, images, video frames, and audio in one API call</li>
+<li><strong>Function calling</strong> — same tool-use pattern as OpenAI, with long-context advantages</li>
+</ul>
+<blockquote>Best for: Google Workspace shops, long-document analysis (2M context), multimodal use cases.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-8">
+      <div class="slide-number">8 / 17</div>
+      <div class="slide-body"><h1>GitHub Copilot — Microsoft / GitHub</h1>
+<p>Copilot is <strong>not a single model</strong> — it routes to OpenAI, Anthropic, and Google models depending on the task. It's a developer productivity layer built on top of frontier models.</p>
+<p><strong>Surfaces:</strong></p>
+<ul>
+<li><strong>IDE extensions</strong> — VS Code, JetBrains, Neovim, Visual Studio (inline suggestions + chat)</li>
+<li><strong>Copilot Chat</strong> — conversational AI inside the IDE, GitHub.com, and Mobile</li>
+<li><strong>Copilot CLI</strong> — AI-assisted terminal commands</li>
+<li><strong>Copilot Workspace</strong> — task-based agentic development environment (web)</li>
+<li><strong>GitHub.com</strong> — PR summaries, code review explanations, issue descriptions</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li><strong>Copilot Extensions</strong> — GitHub Apps that integrate with Copilot Chat:</li>
+</ul>
+<p>- <em>Skillsets</em>: REST endpoints that answer domain-specific questions</p>
+<p>- <em>Agents</em>: full conversational agents with action-taking capabilities</p>
+<ul>
+<li><strong>Custom instructions</strong> — <code>.github/copilot-instructions.md</code> to tune behavior per repo</li>
+<li><strong>Copilot Workspace sessions</strong> — guided multi-step agentic coding flows</li>
+</ul>
+<blockquote>Best for: development teams where the IDE is the primary work surface.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-9">
+      <div class="slide-number">9 / 17</div>
+      <div class="slide-body"><h1>Microsoft 365 Copilot</h1>
+<p>Microsoft 365 Copilot embeds AI into the entire Office productivity suite. It runs on GPT-4 class models via Azure OpenAI.</p>
+<p><strong>Surfaces:</strong></p>
+<ul>
+<li><strong>M365 Apps</strong> — Word, Excel, PowerPoint, Outlook, Teams, OneNote</li>
+<li><strong>Copilot.microsoft.com</strong> — standalone chat (consumer + enterprise)</li>
+<li><strong>Copilot Studio</strong> — low-code platform to build custom Copilot agents</li>
+<li><strong>Power Platform</strong> — Power Automate + Power Apps with Copilot integration</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li><strong>Declarative agents</strong> — JSON-manifest extensions to M365 Copilot with custom instructions, SharePoint grounding, and API connectors</li>
+<li><strong>Custom copilots (Copilot Studio)</strong> — no-code/low-code bots for Teams, web, or any channel</li>
+<li><strong>API plugins</strong> — connect M365 Copilot to external systems via OpenAPI spec (same pattern as GPT Actions)</li>
+<li><strong>Teams message extensions</strong> — Copilot-queryable cards surfaced in Teams and Outlook</li>
+<li><strong>Power Automate flows</strong> — triggered by Copilot chat to automate processes</li>
+</ul>
+<blockquote>Best for: enterprises deeply invested in Microsoft 365 who want AI inside existing workflows.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-10">
+      <div class="slide-number">10 / 17</div>
+      <div class="slide-body"><h1>Cursor — The AI-First IDE</h1>
+<p>Cursor is a VS Code fork rebuilt around AI. All standard VS Code extensions work. The AI layer is deeply integrated at every level.</p>
+<p><strong>Key AI features:</strong></p>
+<ul>
+<li><strong>Tab</strong> — inline next-line and multi-line completions (faster than Copilot, context-aware)</li>
+<li><strong>Chat</strong> — conversational AI with <code>@file</code>, <code>@docs</code>, <code>@web</code>, <code>@codebase</code> context injection</li>
+<li><strong>Composer / Agent</strong> — multi-file edits; in Agent mode, Cursor reads errors, runs commands, iterates</li>
+<li><strong>MCP support</strong> — connect any MCP server to Cursor for tool and data access</li>
+</ul>
+<p><strong>What you can configure / build:</strong></p>
+<ul>
+<li><strong>Cursor rules</strong> — <code>.cursor/rules/*.mdc</code> files (like Claude's <code>CLAUDE.md</code>) to set AI behavior per project</li>
+<li><strong>MCP server connections</strong> — give Cursor access to your files, APIs, and systems</li>
+<li><strong>Custom doc indexing</strong> — add any URL or file set as <code>@docs</code> context</li>
+<li><strong>Model selection</strong> — choose Claude Sonnet, GPT-4o, Gemini Flash per session</li>
+</ul>
+<p><strong>Limitation:</strong> Cursor's extensibility is config-level. You define rules and connect MCP servers; you don't build new surfaces inside Cursor the way you build skills for Claude Code.</p>
+<blockquote>Best for: developers who want a full IDE with deep AI integration out of the box.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-11">
+      <div class="slide-number">11 / 17</div>
+      <div class="slide-body"><h1>Claude Desktop — Your MCP-Enabled AI Workstation</h1>
+<p>Claude Desktop is Anthropic's official desktop app (macOS + Windows). It looks like Claude.ai but has one critical superpower: <strong>native MCP server support</strong>.</p>
+<p><strong>What makes it different from Claude.ai:</strong></p>
+<ul>
+<li>Connect MCP servers by editing <code>claude_desktop_config.json</code></li>
+<li>Claude can then read your local files, query databases, call APIs — without you copy-pasting</li>
+<li>Supports Computer Use (experimental): Claude can control your screen</li>
+<li>Projects: upload files that persist as shared context across all conversations</li>
+</ul>
+<p><strong>Configuration pattern:</strong></p>
+<pre class="code-block"><code>{
+  "mcpServers": {
+    "doc-quality-checker": {
+      "command": "node",
+      "args": ["/path/to/your/server/dist/index.js"]
+    }
+  }
+}</code></pre>
+<p><strong>What you can build for Claude Desktop:</strong></p>
+<ul>
+<li>Any MCP server that exposes tools, resources, or prompts</li>
+<li>Once connected, Claude Desktop users get those capabilities without any code</li>
+</ul>
+<blockquote>Best for: non-developer team members who need MCP-powered Claude without a terminal.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-12">
+      <div class="slide-number">12 / 17</div>
+      <div class="slide-body"><h1>OpenAI Codex CLI — Terminal Coding Agent</h1>
+<p>Codex CLI is OpenAI's open-source terminal coding agent, launched in 2025 as a direct competitor to Claude Code.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>Runs in your terminal — reads your project, writes files, runs commands</li>
+<li>Powered by GPT-4o and o4-mini</li>
+<li>Three approval modes:</li>
+</ul>
+<table>
+<thead><tr><th>Mode</th><th>Behavior</th></tr></thead>
+<tbody>
+<tr><td><strong>Suggest</strong> (default)</td><td>AI proposes changes; you approve each step</td></tr>
+<tr><td><strong>Auto-edit</strong></td><td>Reads and writes files automatically; asks before running commands</td></tr>
+<tr><td><strong>Full-auto</strong></td><td>Fully autonomous — runs commands and edits without approval</td></tr>
+</tbody></table>
+<p><strong>Key differences from Claude Code:</strong></p>
+<ul>
+<li>Open source (Apache 2.0 license) — you can fork and modify it</li>
+<li>Uses OpenAI models by default (configurable)</li>
+<li>No equivalent to Claude's skill system or marketplace integration</li>
+<li>Sandboxed execution on macOS and Linux (Docker on Linux)</li>
+</ul>
+<blockquote>Use Codex CLI if your team is already on OpenAI and wants a terminal agent to pair with Custom GPTs.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-13">
+      <div class="slide-number">13 / 17</div>
+      <div class="slide-body"><h1>Groq — Ultra-Fast AI Inference</h1>
+<p>Groq is <strong>not an AI model</strong>. It is an inference platform built on custom silicon called the <strong>LPU (Language Processing Unit)</strong> — hardware designed specifically to run LLMs at extreme speed.</p>
+<p><strong>What Groq offers:</strong></p>
+<ul>
+<li><strong>GroqCloud API</strong> — run open-source models at 300–800 tokens/second (vs ~30–100 on standard GPU)</li>
+<li><strong>Models available:</strong> Llama 3.3 70B, Llama 3.1 405B, Mixtral 8x7B, Gemma 2, Whisper (transcription)</li>
+<li><strong>OpenAI-compatible endpoints</strong> — swap <code>openai</code> for <code>groq</code> in your code, same API shape</li>
+</ul>
+<p><strong>When to use Groq:</strong></p>
+<ul>
+<li>Real-time transcription or voice pipelines (Whisper at high speed)</li>
+<li>Latency-sensitive documentation workflows where response time matters</li>
+<li>Cost-efficient bulk runs on open models</li>
+<li>Prototyping with open-source models before committing to a commercial API</li>
+</ul>
+<p><strong>What you can build:</strong></p>
+<ul>
+<li>Any application you'd build on OpenAI, using the same API pattern</li>
+<li>Low-latency documentation review pipelines</li>
+<li>Real-time style checking during authoring</li>
+</ul>
+<blockquote>Think of Groq as a turbo engine for open-source models — not a model in itself.</blockquote>
+</div>
+    </section>
+
+    <section class="slide" id="slide-14">
+      <div class="slide-number">14 / 17</div>
+      <div class="slide-body"><h1>What Can You Build? — Full Comparison</h1>
+<table>
+<thead><tr><th>Platform</th><th>Reusable Prompts</th><th>Custom Agents</th><th>Tool Connections</th><th>Deploy to Others</th></tr></thead>
+<tbody>
+<tr><td><strong>Claude Code</strong></td><td>✅ Skills (.md files)</td><td>✅ SDK agents</td><td>✅ MCP servers</td><td>✅ Marketplace plugin</td></tr>
+<tr><td><strong>Claude Desktop</strong></td><td>✅ via MCP prompts</td><td>—</td><td>✅ MCP servers</td><td>✅ Share config</td></tr>
+<tr><td><strong>ChatGPT</strong></td><td>✅ Custom GPTs</td><td>✅ Assistants API</td><td>✅ GPT Actions (OpenAPI)</td><td>✅ GPT Store</td></tr>
+<tr><td><strong>Gemini</strong></td><td>✅ Gems</td><td>✅ Vertex AI agents</td><td>✅ Function calling</td><td>✅ Vertex AI deploy</td></tr>
+<tr><td><strong>GitHub Copilot</strong></td><td>✅ Custom instructions</td><td>✅ Copilot Extensions</td><td>✅ Skillsets/agents</td><td>✅ GitHub Marketplace</td></tr>
+<tr><td><strong>M365 Copilot</strong></td><td>—</td><td>✅ Copilot Studio</td><td>✅ API plugins</td><td>✅ Teams / M365</td></tr>
+<tr><td><strong>Cursor</strong></td><td>✅ Rules (.mdc files)</td><td>—</td><td>✅ MCP connections</td><td>—</td></tr>
+<tr><td><strong>Codex CLI</strong></td><td>—</td><td>—</td><td>✅ Shell/file system</td><td>—</td></tr>
+<tr><td><strong>Groq</strong></td><td>—</td><td>—</td><td>✅ Any (OpenAI compat.)</td><td>—</td></tr>
+</tbody></table>
+</div>
+    </section>
+
+    <section class="slide" id="slide-15">
+      <div class="slide-number">15 / 17</div>
+      <div class="slide-body"><h1>Choosing the Right Tool</h1>
+<pre class="code-block"><code>"I want to automate a documentation review task"
+  → Claude Code skill (Reviewer pattern)
+
+"I want non-technical teammates to run the review tool"
+  → Claude Desktop + MCP server
+
+"I want to integrate AI into our Microsoft Teams workflow"
+  → M365 Copilot declarative agent or Copilot Studio
+
+"I want AI inline while I write code"
+  → Cursor or GitHub Copilot in VS Code
+
+"I want to build a public AI tool and share it on a marketplace"
+  → Custom GPT (GPT Store) or Claude Marketplace plugin
+
+"I want the fastest possible inference for a real-time pipeline"
+  → Groq with an open-source model
+
+"I want AI to process documents across Google Drive and Workspace"
+  → Gemini + Vertex AI with Workspace integration</code></pre>
+</div>
+    </section>
+
+    <section class="slide" id="slide-16">
+      <div class="slide-number">16 / 17</div>
+      <div class="slide-body"><h1>Why We're Building on Claude + MCP</h1>
+<p>Three reasons this stack was chosen for technical writers:</p>
+<p><strong>1. Skills are markdown files.</strong></p>
+<p>You already write markdown. A skill is a well-structured instruction set — and writing clear instructions is your job. No coding required to build useful, reusable AI tools.</p>
+<p><strong>2. MCP is the open standard.</strong></p>
+<p>Model Context Protocol is backed by Anthropic but implemented across Claude, Cursor, Zed, and other tools. What you build here is portable — your MCP server works in Cursor too.</p>
+<p><strong>3. Technical writers are the right people to build these tools.</strong></p>
+<p>Prompt quality drives output quality. A writer who understands audience, structure, and constraints will build better skills than a developer who doesn't think about those things. This stack puts that advantage to work.</p>
+<table>
+<thead><tr><th>By the end of this program...</th></tr></thead>
+<tbody>
+<tr><td>You write skills that review, generate, transform, and analyze docs</td></tr>
+<tr><td>You build an MCP server that your whole team can use</td></tr>
+<tr><td>You understand how to extend the same pattern to ChatGPT, Cursor, or M365</td></tr>
+</tbody></table>
+</div>
+    </section>
+
+    <section class="slide" id="slide-17">
+      <div class="slide-number">17 / 17</div>
+      <div class="slide-body"><h1>Module 0 Checkpoint</h1>
+<ul class="checklist">
+<li><input type="checkbox"  disabled> Explain what a token and a context window are in plain language</li>
+<li><input type="checkbox"  disabled> Name 3 frontier models and one key differentiator for each</li>
+<li><input type="checkbox"  disabled> Distinguish between a model, an IDE, and an inference provider</li>
+<li><input type="checkbox"  disabled> Explain what you can build with Claude that you can't with Cursor alone</li>
+<li><input type="checkbox"  disabled> Name the format Claude uses for reusable prompt templates (skills)</li>
+<li><input type="checkbox"  disabled> Explain what MCP stands for and why it matters for extensibility</li>
+<li><input type="checkbox"  disabled> Describe what Groq is — and what it is not</li>
+</ul>
+<p><strong>Next: Module 1 — AI Literacy for Technical Writers →</strong></p>
+</div>
+    </section>
+  </main>
+
+  <footer class="controls">
+    <button class="btn" id="btn-prev" onclick="prevSlide()" disabled>&#8592; Prev</button>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width: 5.9%"></div>
+    </div>
+    <span class="slide-counter" id="counter">1 / 17</span>
+    <button class="btn btn-primary" id="btn-next" onclick="nextSlide()">Next &#8594;</button>
+    <span class="kbd-hint"><kbd>←</kbd><kbd>→</kbd> navigate</span>
+  </footer>
+
+  <script>
+    let current = 0;
+    const total = 17;
+    const slides = document.querySelectorAll('.slide');
+
+    function show(n) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[n].classList.add('active');
+      current = n;
+      document.getElementById('counter').textContent = (n + 1) + ' / ' + total;
+      document.getElementById('progress-bar').style.width = ((n + 1) / total * 100).toFixed(1) + '%';
+      document.getElementById('btn-prev').disabled = n === 0;
+      document.getElementById('btn-next').disabled = n === total - 1;
+      document.getElementById('btn-next').textContent = n === total - 1 ? 'End ✓' : 'Next →';
+    }
+
+    function nextSlide() { if (current < total - 1) show(current + 1); }
+    function prevSlide() { if (current > 0) show(current - 1); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+      if (e.key === 'Home') { e.preventDefault(); show(0); }
+      if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+    });
+
+    show(0);
+  </script>
+</body>
+</html>
