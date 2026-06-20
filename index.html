@@ -126,6 +126,9 @@
                     <div id="error-message" class="text-red-600 text-sm mt-3 text-center hidden">
                         An error occurred while saving. Please try again.
                     </div>
+                    <div id="issue-fallback" class="text-sm mt-3 text-center hidden">
+                        Don't lose your feedback — <a id="create-issue-link-fallback" href="#" target="_blank" rel="noopener" class="text-indigo-600 font-medium underline">post it directly as a GitHub issue</a>.
+                    </div>
                 </div>
             </form>
         </div>
@@ -138,8 +141,13 @@
                 </svg>
             </div>
             <h2 class="text-2xl font-bold text-slate-900 mb-2">Thank You!</h2>
-            <p class="text-slate-600 mb-6">Your feedback and project ideas have been successfully recorded. We look forward to seeing your AI integrations over the next 6 weeks!</p>
-            <button onclick="window.location.reload()" class="text-indigo-600 font-medium hover:text-indigo-800">Submit another response</button>
+            <p class="text-slate-600 mb-6">Your feedback and project ideas have been saved. <strong>Final step:</strong> post it to our GitHub tracker so the team sees it.</p>
+            <a id="create-issue-link" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 py-3 px-5 rounded-md text-sm font-medium text-white bg-slate-800 hover:bg-slate-900 transition-colors mb-3">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.82 0c2.22-1.49 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.42-2.69 5.39-5.25 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
+                Post feedback as a GitHub issue
+            </a>
+            <p class="text-xs text-slate-400 mb-6">Opens GitHub with your feedback pre-filled — just press <strong>Submit new issue</strong> there. Requires a GitHub account; the issue is public.</p>
+            <button onclick="window.location.reload()" class="text-indigo-600 font-medium hover:text-indigo-800 block mx-auto">Submit another response</button>
         </div>
 
         <!-- Admin Dashboard Container -->
@@ -562,6 +570,13 @@
                 userId: auth.currentUser.uid
             };
 
+            // Prefill the GitHub issue links from this submission (used on both success and error)
+            const issueUrl = buildIssueUrl(formData);
+            const issueLink = document.getElementById('create-issue-link');
+            if (issueLink) issueLink.href = issueUrl;
+            const issueLinkFallback = document.getElementById('create-issue-link-fallback');
+            if (issueLinkFallback) issueLinkFallback.href = issueUrl;
+
             try {
                 // Save to Firestore using strictly required path structure
                 const collectionName = 'twt_feedback_v1';
@@ -576,11 +591,17 @@
                 formContainer.classList.add('hidden');
                 successContainer.classList.remove('hidden');
                 form.reset();
-                
+
+                // Best-effort: also open the prefilled issue now. If the browser's popup
+                // blocker stops it, the "Post feedback as a GitHub issue" button is the reliable path.
+                window.open(issueUrl, '_blank', 'noopener');
+
             } catch (error) {
                 console.error("Error saving document: ", error);
                 errorMessage.textContent = "Failed to save feedback. Please check your connection.";
                 errorMessage.classList.remove('hidden');
+                // Don't lose the feedback — offer the GitHub issue as a fallback.
+                document.getElementById('issue-fallback').classList.remove('hidden');
             } finally {
                 // Reset loading state
                 submitText.textContent = "Submit Feedback & Projects";
@@ -879,6 +900,37 @@
                 console.error("Error fetching admin data:", error);
                 adminLoading.innerHTML = `<span class="text-red-500">Failed to load responses. Permission denied or network error.</span>`;
             }
+        }
+
+        // Build a prefilled GitHub "new issue" URL from the feedback.
+        // No token, nothing secret — the submitter presses "Submit new issue" on GitHub.
+        const ISSUE_REPO = 'AmanProjects/TWTAI';
+        function buildIssueUrl(data) {
+            const r = Number(data.rating) || 0;
+            const stars = '★'.repeat(r) + '☆'.repeat(5 - r);
+            const name = data.name || 'Anonymous';
+            const projects = (data.projects || []).filter(p => p && p.trim());
+            const title = `Workshop Feedback — ${name} (${r}/5)`;
+            const body = [
+                '## Mid-Workshop Feedback (Days 1 & 2)',
+                '',
+                `- **Name:** ${name}`,
+                `- **Rating:** ${stars} (${r}/5)`,
+                '',
+                '### Most valuable so far',
+                data.feedbackPositive || '_No response_',
+                '',
+                '### Could be improved',
+                data.feedbackImprove || '_No response_',
+                '',
+                '### Proposed projects (Weeks 3–8)',
+                projects.length ? projects.map((p, i) => `${i + 1}. ${p}`).join('\n') : '_No response_',
+                '',
+                '---',
+                '_Submitted via the TWT feedback form._'
+            ].join('\n');
+            const params = new URLSearchParams({ title, body, labels: 'feedback' });
+            return `https://github.com/${ISSUE_REPO}/issues/new?${params.toString()}`;
         }
 
         // Helper to prevent XSS in admin dashboard
